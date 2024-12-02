@@ -1,20 +1,6 @@
-// Template.cpp
+// Image.cpp
 
-#include "Template.h"
-
-void ListBoxWindowDoubleClickFunction( LPCTSTR lpszItemText )
-{
-	// Display item text
-	MessageBox( NULL, lpszItemText, INFORMATION_MESSAGE_CAPTION, ( MB_OK | MB_ICONINFORMATION ) );
-
-} // End of function ListBoxWindowDoubleClickFunction
-
-void ListBoxWindowSelectionChangedFunction( LPCTSTR lpszItemText )
-{
-	// Show item text on status bar window
-	StatusBarWindowSetText( lpszItemText );
-
-} // End of function ListBoxWindowSelectionChangedFunction
+#include "Image.h"
 
 int ShowAboutMessage( HWND hWndParent )
 {
@@ -56,29 +42,19 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 			// Get instance
 			hInstance = GetModuleHandle( NULL );
 
-			// Create list box window
-			if( ListBoxWindowCreate( hWndMain, hInstance ) )
+			// Create status bar window
+			if( StatusBarWindowCreate( hWndMain, hInstance ) )
 			{
-				// Successfully created list box window
+				// Successfully created status bar window
 				HFONT hFont;
 
 				// Get font
 				hFont = ( HFONT )GetStockObject( DEFAULT_GUI_FONT );
 
-				// Set list box window font
-				ListBoxWindowSetFont( hFont );
+				// Set status bar window font
+				StatusBarWindowSetFont( hFont );
 
-				// Create status bar window
-				if( StatusBarWindowCreate( hWndMain, hInstance ) )
-				{
-					// Successfully created status bar window
-
-					// Set status bar window font
-					StatusBarWindowSetFont( hFont );
-
-				} // End of successfully created status bar window
-
-			} // End of successfully created list box window
+			} // End of successfully created status bar window
 
 			// Break out of switch
 			break;
@@ -91,7 +67,6 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 			int nClientHeight;
 			RECT rcStatusBar;
 			int nStatusBarWindowHeight;
-			int nListBoxWindowHeight;
 
 			// Get client size
 			nClientWidth	= LOWORD( lParam );
@@ -105,10 +80,6 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 
 			// Calculate window sizes
 			nStatusBarWindowHeight	= ( rcStatusBar.bottom - rcStatusBar.top );
-			nListBoxWindowHeight	= ( nClientHeight - nStatusBarWindowHeight );
-
-			// Move control windows
-			ListBoxWindowMove( 0, 0, nClientWidth, nListBoxWindowHeight, TRUE );
 
 			// Break out of switch
 			break;
@@ -117,9 +88,6 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 		case WM_ACTIVATE:
 		{
 			// An activate message
-
-			// Focus on list box window
-			ListBoxWindowSetFocus();
 
 			// Break out of switch
 			break;
@@ -171,30 +139,8 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 				{
 					// Default command
 
-					// See if command is from list box window
-					if( IsListBoxWindow( ( HWND )lParam ) )
-					{
-						// Command is from list box window
-
-						// Handle command from list box window
-						if( !( ListBoxWindowHandleCommandMessage( wParam, lParam, &ListBoxWindowDoubleClickFunction, &ListBoxWindowSelectionChangedFunction ) ) )
-						{
-							// Command was not handled from list box window
-
-							// Call default procedure
-							lr = DefWindowProc( hWndMain, uMessage, wParam, lParam );
-
-						} // End of command was not handled from list box window
-
-					} // End of command is from list box window
-					else
-					{
-						// Command is not from list box window
-
-						// Call default procedure
-						lr = DefWindowProc( hWndMain, uMessage, wParam, lParam );
-
-					} // End of command is not from list box window
+					// Call default procedure
+					lr = DefWindowProc( hWndMain, uMessage, wParam, lParam );
 
 					// Break out of switch
 					break;
@@ -338,9 +284,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE,  LPSTR, int nCmdShow )
 			HMENU hMenuSystem;
 			int nItemCount;
 
-			// Allocate string memory
-			LPTSTR lpszStatusMessage = new char[ STRING_LENGTH ];
-
 			// Get system menu
 			hMenuSystem = GetSystemMenu( hWndMain, FALSE );
 
@@ -356,15 +299,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE,  LPSTR, int nCmdShow )
 			// Update main window
 			UpdateWindow( hWndMain );
 
-			// Populate list box window
-			nItemCount = ListBoxWindowPopulate();
-
-			// Format status message
-			wsprintf( lpszStatusMessage, LIST_BOX_WINDOW_POPULATE_STATUS_MESSAGE_FORMAT_STRING, nItemCount );
-
-			// Show status message on status bar window
-			StatusBarWindowSetText( lpszStatusMessage );
-
 			// Main message loop
 			while( GetMessage( &msg, NULL, 0, 0 ) > 0 )
 			{
@@ -375,9 +309,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE,  LPSTR, int nCmdShow )
 				DispatchMessage( &msg );
 
 			}; // End of main message loop
-
-			// Free string memory
-			delete [] lpszStatusMessage;
 
 		} // End of successfully created main window
 		else
