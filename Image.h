@@ -11,6 +11,8 @@
 #include "Common.h"
 #include "Resource.h"
 
+#include "Bitmap.h"
+
 #include "StatusBarWindow.h"
 
 #define MAIN_WINDOW_CLASS_NAME													"Main Image Window Class"

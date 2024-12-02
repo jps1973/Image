@@ -93,6 +93,17 @@ LRESULT CALLBACK MainWindowProcedure( HWND hWndMain, UINT uMessage, WPARAM wPara
 			break;
 
 		} // End of an activate message
+		case WM_PAINT:
+		{
+			// A paint message
+
+			// Paint bitmap onto window
+			BitmapPaint( hWndMain );
+
+			// Break out of switch
+			break;
+
+		} // End of a paint message
 		case WM_GETMINMAXINFO:
 		{
 			// A get min max info message
@@ -292,6 +303,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE,  LPSTR, int nCmdShow )
 
 			// Add about item to system menu
 			InsertMenu( hMenuSystem, SYSTEM_MENU_ABOUT_ITEM_POSITION, MF_BYPOSITION, IDM_HELP_ABOUT, SYSTEM_MENU_ABOUT_ITEM_TEXT );
+
+			// Load bitmap
+			BitmapLoad( "Image.jpg" );
 
 			// Show main window
 			ShowWindow( hWndMain, nCmdShow );
